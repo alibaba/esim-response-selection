@@ -326,14 +326,12 @@ def create_model(embedding):
     # encode the sentence pair
     with tf.variable_scope("encoder", reuse=tf.AUTO_REUSE):
         if FLAGS.use_cudnn:
-            proj1_enc = bilstm_layer_cudnn(emb1, 1, FLAGS.hidden_size)
-            proj2_enc = bilstm_layer_cudnn(emb2, 1, FLAGS.hidden_size)
+            x1_enc = bilstm_layer_cudnn(emb1, 1, FLAGS.hidden_size)
+            x2_enc = bilstm_layer_cudnn(emb2, 1, FLAGS.hidden_size)
         else:
-            proj1_enc = bilstm_layer(emb1, 1, FLAGS.hidden_size)
-            proj2_enc = bilstm_layer(emb2, 1, FLAGS.hidden_size)
+            x1_enc = bilstm_layer(emb1, 1, FLAGS.hidden_size)
+            x2_enc = bilstm_layer(emb2, 1, FLAGS.hidden_size)
 
-    x1_enc = tf.concat(proj1_enc, 2)
-    x2_enc = tf.concat(proj2_enc, 2)
     x1_enc = x1_enc * tf.expand_dims(x1_mask, -1)
     x2_enc = x2_enc * tf.expand_dims(x2_mask, -1)
 
@@ -362,14 +360,11 @@ def create_model(embedding):
     # inference composition
     with tf.variable_scope("composition", reuse=tf.AUTO_REUSE):
         if FLAGS.use_cudnn:
-            proj1_cmp = bilstm_layer_cudnn(x1_match_mapping, 1, FLAGS.hidden_size)
-            proj2_cmp = bilstm_layer_cudnn(x2_match_mapping, 1, FLAGS.hidden_size)
+            x1_cmp = bilstm_layer_cudnn(x1_match_mapping, 1, FLAGS.hidden_size)
+            x2_cmp = bilstm_layer_cudnn(x2_match_mapping, 1, FLAGS.hidden_size)
         else:
-            proj1_cmp = bilstm_layer(x1_match_mapping, 1, FLAGS.hidden_size)
-            proj2_cmp = bilstm_layer(x2_match_mapping, 1, FLAGS.hidden_size)
-
-    x1_cmp = tf.concat(proj1_cmp, 2)
-    x2_cmp = tf.concat(proj2_cmp, 2)
+            x1_cmp = bilstm_layer(x1_match_mapping, 1, FLAGS.hidden_size)
+            x2_cmp = bilstm_layer(x2_match_mapping, 1, FLAGS.hidden_size)
 
     logit_x1_sum = tf.reduce_sum(x1_cmp * tf.expand_dims(x1_mask, -1), 0) / \
         tf.expand_dims(tf.reduce_sum(x1_mask, 0), 1)

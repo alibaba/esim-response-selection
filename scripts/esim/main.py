@@ -276,7 +276,7 @@ def local_inference(x1, x1_mask, x2, x2_mask):
 
     # attention_weight_1: [batch_size, seq_length2, seq_length1]
     attention_weight_1 = attention_weight - tf.reduce_max(attention_weight, axis=1, keepdims=True)
-    attention_weight_1 = tf.exp(tf.transpose(attention_weight, [0, 2, 1]))
+    attention_weight_1 = tf.exp(tf.transpose(attention_weight_1, [0, 2, 1]))
     attention_weight_1 = attention_weight_1 * tf.expand_dims(x1_mask, 1)
 
     # beta: [batch_size, seq_length2, seq_length1]

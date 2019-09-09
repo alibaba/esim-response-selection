@@ -78,7 +78,7 @@ class TextIterator:
                 # sort by length of sum of target buffer and target_buffer
                 length_list = []
                 for ins in self.instance_buffer:
-                    current_length = ins[1] + ins[2]
+                    current_length = len(ins[1]) + len(ins[2])
                     length_list.append(current_length)
 
                 length_array = numpy.array(length_list)
